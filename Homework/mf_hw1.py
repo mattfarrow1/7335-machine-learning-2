@@ -18,27 +18,73 @@
 
 # Please fill in an explanation of each function and an example of how to use it below.
 
-# List:
+#----------
+## Lists ##
+#----------
 
-# append()
-# extend()
-# index()
-# index(value, integer)
-# insert(position)
-# remove()
-# pop() 
-# count()
-# reverse()
-# sort()
-# [1]+[1]
-# [2]*2
-# [1,2][1:]
-# [x for x in [2,3]]
-# [x for x in [1,2] if x ==1]
-# [y*2 for x in [[1,2],[3,4]] for y in x]
-# A = [1]
+## append()
 
-# Tuple:
+print("APPEND")
+print("Append allows us to add an item to the end of a list.")
+sample = ['a', 'b']
+print("Our sample list:", sample)
+sample.append('c')
+print("Our sample list + append:", sample)
+
+## extend()
+
+print("\nEXTEND")
+print("Extend works similarly to append, but allows us to add a list to the end of another list.")
+print("Our sample list:", sample)
+sample_extend = ['c', 'd']
+sample.extend(sample_extend)
+print("Out sample list + extend:", sample)
+
+## index()
+
+print("\nINDEX")
+print("By using index we can find where an item is in a list.")
+print("Our extended list:", sample)
+print("'b' is located at position:", sample.index('b'))
+
+## index(value, integer)
+
+## insert(position)
+
+print("\nINSERT")
+print("Insert allows us to put an item into an existing list.")
+print("Let's insert the course number into our list at position 2.")
+sample.insert(2, 7335)
+print(sample)
+
+## remove()
+
+print("\nREMOVE")
+print("Remove works the same as insert, but does not require us to specify the position.")
+sample.remove(7335)
+print(sample)
+
+## pop()
+
+print("\POP")
+print("Pop allows us to pull an item off of our list. We'll remove 'd'.'")
+sample.pop(sample.index('d'))
+print(sample)
+
+## count()
+## reverse()
+## sort()
+## [1]+[1]
+## [2]*2
+## [1,2][1:]
+## [x for x in [2,3]]
+## [x for x in [1,2] if x ==1]
+## [y*2 for x in [[1,2],[3,4]] for y in x]
+## A = [1]
+
+#-----------
+## Tuples ##
+#-----------
 
 # count()
 # index()
