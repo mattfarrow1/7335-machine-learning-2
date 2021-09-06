@@ -18,108 +18,152 @@
 
 # Please fill in an explanation of each function and an example of how to use it below.
 
-#----------
-## Lists ##
-#----------
+# ╔═════════════════════╗
+# ║        Lists          ║
+# ╚═════════════════════╝
 
 ## append()
 
-print("APPEND")
-print("Append allows us to add an item to the end of a list.")
-sample = ['a', 'b']
-print("Our sample list:", sample)
-sample.append('c')
-print("Our sample list + append:", sample)
+# append() allows us to add an item to the end of a list. For example:
+sample = ['a', 'b']  # create a list
+sample.append('c')   # append 'c' to the end of the list
+print(sample)        # check out results
 
 ## extend()
 
-print("\nEXTEND")
-print("Extend works similarly to append, but allows us to add a list to the end of another list.")
-print("Our sample list:", sample)
-sample_extend = ['c', 'd']
-sample.extend(sample_extend)
-print("Out sample list + extend:", sample)
+# extend() works similarly to append, but allows us to add a list to the end of
+# another list.
+sample_extend = ['c', 'd']    # create our new list to add to 'sample'
+sample.extend(sample_extend)  # extend 'sample'
+print(sample)                 # check out results
 
 ## index()
 
-print("\nINDEX")
-print("By using index we can find where an item is in a list.")
-print("Our extended list:", sample)
-print("'b' is located at position:", sample.index('b'))
+# By using index() we can find where an item is in a list.
+print(sample.index('b'))  # see where 'b' appears in our sample
 
 ## index(value, integer)
 
+# By specifying a value and integer within index(), we can specify where the
+# function should start looking. Using our previous example, if we start at
+# index position 2, we should get an error.
+try:
+    sample_position = sample.index('b', 2)
+except ValueError:
+    print("Value is not in the list.")
+
 ## insert(position)
 
-print("\nINSERT")
-print("Insert allows us to put an item into an existing list.")
-print("Let's insert the course number into our list at position 2.")
+# insert() allows us to put an item into an existing list by specifying the
+# position and the item.
 sample.insert(2, 7335)
 print(sample)
 
 ## remove()
 
-print("\nREMOVE")
-print("Remove works the same as insert, but does not require us to specify the position.")
+# remove() works the same as insert, but does not require us to specify the
+# position, only the item to be removed. We'll remove the course number that we
+# inserted in the previous example.
 sample.remove(7335)
 print(sample)
 
 ## pop()
 
-print("\POP")
-print("Pop allows us to pull an item off of our list. We'll remove 'd'.'")
+# pop() allows us to pull an off of our list. We'll remove 'd'.
 sample.pop(sample.index('d'))
 print(sample)
 
 ## count()
+
+# count() returns the number of times a value appears in a list. Let's check the
+# letter 'c'.
+sample_count = sample.count("c")
+print(sample_count)
+
 ## reverse()
+
+# reverse() does what it says on the tin - reverses a list.
+sample_reverse = sample.reverse()
+print(sample_reverse)
+
 ## sort()
+
+# Sorts a list alphabetically. 
+sample_sort = sample.sort()
+print(sample_sort)
+
 ## [1]+[1]
+
+# Using this syntax, we can combine multiple lists together using '+'.
+print("[1] + [1] =", [1] + [1])
+
 ## [2]*2
+
+# Using this syntax, we can combine lists 'n' times.
+print("[2] * 2 =", [2]*2)
+
 ## [1,2][1:]
+
+# To slice a list, excluding the first element, we can add [1:] after our list. 
+print([1,2][1:])
+
 ## [x for x in [2,3]]
-## [x for x in [1,2] if x ==1]
+
+print("\nLIST DUPLICATION")
+print("[x for x in [2,3]]\n  This duplicates the list.")
+print("[x for x in [2,3]] =", [x for x in [2,3]])
+
+## [x for x in [1,2] if x == 1]
 ## [y*2 for x in [[1,2],[3,4]] for y in x]
 ## A = [1]
 
-#-----------
-## Tuples ##
-#-----------
+# ╔═════════════════════╗
+# ║       Tuples          ║
+# ╚═════════════════════╝
 
-# count()
+## count()
+
+# count() will return how many times an element appears. For example, how many
+# times does the number '3' appear in the first 16 digits of pi?
+# 3.141592653589793
+pi_count = (3,1,4,1,5,9,2,6,5,3,5,8,9,7,9,3)
+print(pi_count.count(3))
+
 # index()
+
+# index() will return the position of the first occurance of the value. For
+# example, the first occurance of the number '9' is at index:
+print(pi_count.index(9))
+
 # build a dictionary from tuples
 # unpack tuples
 
-# --------------
-## Dictionary ##
-# --------------
+# ╔═════════════════════╗
+# ║     Dictionary        ║
+# ╚═════════════════════╝
 
 # Key value pairs
-print("")
 a_dict = {'I hate':'you', 'You should':'leave'}
 
-# keys()
+## keys()
 
-print("\nKEYS")
-print("Allows us to return the keys from a dictionary.")
-print("The keys of our dictionary are:", a_dict.keys())
+# Allows us to return the keys from a dictionary. 
+print(a_dict.keys())
 
-# items()
+## items()
 
-print("\nITEMS")
-print("Allows us to return the items from a dictionary.")
-print("The items of our dictionary are:", a_dict.items())
+# Allows us to return the items from a dictionary.
+print(a_dict.items())
 
-# hasvalues()
+## hasvalues()
 
-# _key()
+## _key()
 
-# ‘never’ in a_dict
+## ‘never’ in a_dict
 
-# del a_dict['me']
+## del a_dict['me']
 
-# a_dict.clear()
+## a_dict.clear()
 
 
 # Ok enough by me do the rest on your own!
@@ -138,7 +182,9 @@ print("The items of our dictionary are:", a_dict.items())
 # union()
 # update()
 
-# Strings:
+# ╔═════════════════════╗
+# ║       Strings         ║
+# ╚═════════════════════╝
 
 # capitalize()
 # casefold()
@@ -152,22 +198,52 @@ print("The items of our dictionary are:", a_dict.items())
 # title()
 # zfill()
 
-# from collections import Counter
-# Fill in yourself
+# ╔═════════════════════╗
+# ║     Collections       ║
+# ╚═════════════════════╝
+
+from collections import Counter
 
 # from itertools import * (Bonus: this one is optional, but recommended)
-# Fill in yourself
 
-# flower_orders=['W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y','B/Y','B/Y','B/Y','B/Y','B/Y','R/B/Y','R/B/Y','R/B/Y','R/B/Y','R/B/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/G','W/G','W/G','W/G','R/Y','R/Y','R/Y','R/Y','N/R/V/Y','N/R/V/Y','N/R/V/Y','N/R/V/Y','W/R/B/V','W/R/B/V','W/R/B/V','W/R/B/V','W/N/R/V/Y','W/N/R/V/Y','W/N/R/V/Y','W/N/R/V/Y','N/R/Y','N/R/Y','N/R/Y','W/V/O','W/V/O','W/V/O','W/N/R/Y','W/N/R/Y','W/N/R/Y','R/B/V/Y','R/B/V/Y','R/B/V/Y','W/R/V/Y','W/R/V/Y','W/R/V/Y','W/R/B/V/Y','W/R/B/V/Y','W/R/B/V/Y','W/N/R/B/Y','W/N/R/B/Y','W/N/R/B/Y','R/G','R/G','B/V/Y','B/V/Y','N/B/Y','N/B/Y','W/B/Y','W/B/Y','W/N/B','W/N/B','W/N/R','W/N/R','W/N/B/Y','W/N/B/Y','W/B/V/Y','W/B/V/Y','W/N/R/B/V/Y/G/M','W/N/R/B/V/Y/G/M','B/R','N/R','V/Y','V','N/R/V','N/V/Y','R/B/O','W/B/V','W/V/Y','W/N/R/B','W/N/R/O','W/N/R/G','W/N/V/Y','W/N/Y/M','N/R/B/Y','N/B/V/Y','R/V/Y/O','W/B/V/M','W/B/V/O','N/R/B/Y/M','N/R/V/O/M','W/N/R/Y/G','N/R/B/V/Y','W/R/B/V/Y/P','W/N/R/B/Y/G','W/N/R/B/V/O/M','W/N/R/B/V/Y/M','W/N/B/V/Y/G/M','W/N/B/V/V/Y/P']
+flower_orders=['W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y','B/Y','B/Y','B/Y','B/Y','B/Y','R/B/Y','R/B/Y','R/B/Y','R/B/Y','R/B/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/G','W/G','W/G','W/G','R/Y','R/Y','R/Y','R/Y','N/R/V/Y','N/R/V/Y','N/R/V/Y','N/R/V/Y','W/R/B/V','W/R/B/V','W/R/B/V','W/R/B/V','W/N/R/V/Y','W/N/R/V/Y','W/N/R/V/Y','W/N/R/V/Y','N/R/Y','N/R/Y','N/R/Y','W/V/O','W/V/O','W/V/O','W/N/R/Y','W/N/R/Y','W/N/R/Y','R/B/V/Y','R/B/V/Y','R/B/V/Y','W/R/V/Y','W/R/V/Y','W/R/V/Y','W/R/B/V/Y','W/R/B/V/Y','W/R/B/V/Y','W/N/R/B/Y','W/N/R/B/Y','W/N/R/B/Y','R/G','R/G','B/V/Y','B/V/Y','N/B/Y','N/B/Y','W/B/Y','W/B/Y','W/N/B','W/N/B','W/N/R','W/N/R','W/N/B/Y','W/N/B/Y','W/B/V/Y','W/B/V/Y','W/N/R/B/V/Y/G/M','W/N/R/B/V/Y/G/M','B/R','N/R','V/Y','V','N/R/V','N/V/Y','R/B/O','W/B/V','W/V/Y','W/N/R/B','W/N/R/O','W/N/R/G','W/N/V/Y','W/N/Y/M','N/R/B/Y','N/B/V/Y','R/V/Y/O','W/B/V/M','W/B/V/O','N/R/B/Y/M','N/R/V/O/M','W/N/R/Y/G','N/R/B/V/Y','W/R/B/V/Y/P','W/N/R/B/Y/G','W/N/R/B/V/O/M','W/N/R/B/V/Y/M','W/N/B/V/Y/G/M','W/N/B/V/V/Y/P']
 
 # 1. Build a counter object and use the counter and confirm they have the same values.
+
+flower_counter = Counter(flower_orders)
+flower_set = set(flower_orders)
+print("Is the counter the same as the orders?",list(flower_counter.keys()).sort() == list(flower_set).sort())
+
 # 2. Count how many objects have color W in them.
+
+flower_w = [x for x in flower_counter if 'W' in x]
+print("There are", len(flower_w), "orders with 'W' in them.")
+
 # 3. Make histogram of colors
+
+# from matplotlib import pyplot as plt
+# colors = [y for x in flower_orders for y in x.split('/')]
+# plt.hist(colors)
+# plt.show()
+
 # # Hint from JohnP - Itertools has a permutation function that might help with these next two.
-# 4. Rank the pairs of colors in each order regardless of how many colors are in an order.
-# 5. Rank the triplets of colors in each order regardless of how many colors are in an order.
-# 6. Make dictionary color for keys and values are what other colors it is ordered with.
-# 7. Make a graph showing the probability of having an edge between two colors based on how often they co-occur.  (a numpy square matrix)
+
+# 4. Rank the pairs of colors in each order regardless of how many colors are in
+#    an order.
+import itertools
+
+# 5. Rank the triplets of colors in each order regardless of how many colors are
+#    in an order.
+
+
+# 6. Make dictionary color for keys and values are what other colors it is
+#    ordered with.
+
+
+# 7. Make a graph showing the probability of having an edge between two colors
+#    based on how often they co-occur. (a numpy square matrix)
+
+
 # 8. Make 10 business questions related to the questions we asked above.
 
 import string
@@ -210,10 +286,25 @@ print(text_no_sp)
 
 # 3. Occurrence probabilities for letters
 
-# Before counting the probabilities, we need to convert all of the text to lowercase and remove punctuation.
+# Before counting the probabilities, we need to convert all of the text to
+# lowercase and remove punctuation.
+
+text_clean = text_no_sp.lower()
+import re
+text_clean =re.sub(r'[^\w\s]', '', text_clean)
+
+text_counter = Counter(text_clean)
+text_letters = len(text_clean)
+
+print('')
+for key in sorted(text_counter, key = text_counter.get, reverse = True):
+    print(key, "appears", round((text_counter[key] / text_letters*100), 2), "% of the time.")
 
 # 4. Tell me transition probabilities for every letter pairs
 # 5. Make a 26x26 graph of 4. in numpy
+
+
+
 # #optional
 # 6. plot graph of transition probabilities from letter to letter
 
