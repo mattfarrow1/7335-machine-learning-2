@@ -91,16 +91,36 @@ print(sample)
 # build a dictionary from tuples
 # unpack tuples
 
-# Dicts:
+# --------------
+## Dictionary ##
+# --------------
 
-# a_dict = {'I hate':'you', 'You should':’leave’}
+# Key value pairs
+print("")
+a_dict = {'I hate':'you', 'You should':'leave'}
+
 # keys()
+
+print("\nKEYS")
+print("Allows us to return the keys from a dictionary.")
+print("The keys of our dictionary are:", a_dict.keys())
+
 # items()
+
+print("\nITEMS")
+print("Allows us to return the items from a dictionary.")
+print("The items of our dictionary are:", a_dict.items())
+
 # hasvalues()
+
 # _key()
+
 # ‘never’ in a_dict
+
 # del a_dict['me']
+
 # a_dict.clear()
+
 
 # Ok enough by me do the rest on your own!
 # use dir() to get built in functions***
@@ -150,34 +170,48 @@ print(sample)
 # 7. Make a graph showing the probability of having an edge between two colors based on how often they co-occur.  (a numpy square matrix)
 # 8. Make 10 business questions related to the questions we asked above.
 
-# dead_men_tell_tales = 
-# ['Four score and seven years ago our fathers brought forth on this',
-# 'continent a new nation, conceived in liberty and dedicated to the',
-# 'proposition that all men are created equal. Now we are engaged in',
-# 'a great civil war, testing whether that nation or any nation so',
-# 'conceived and so dedicated can long endure. We are met on a great',
-# 'battlefield of that war. We have come to dedicate a portion of',
-# 'that field as a final resting-place for those who here gave their',
-# 'lives that that nation might live. It is altogether fitting and',
-# 'proper that we should do this. But in a larger sense, we cannot',
-# 'dedicate, we cannot consecrate, we cannot hallow this ground.',
-# 'The brave men, living and dead who struggled here have consecrated',
-# 'it far above our poor power to add or detract. The world will',
-# 'little note nor long remember what we say here, but it can never',
-# 'forget what they did here. It is for us the living rather to be',
-# 'dedicated here to the unfinished work which they who fought here',
-# 'have thus far so nobly advanced. It is rather for us to be here',
-# 'dedicated to the great task remaining before us--that from these',
-# 'honored dead we take increased devotion to that cause for which',
-# 'they gave the last full measure of devotion--that we here highly',
-# 'resolve that these dead shall not have died in vain, that this',
-# 'nation under God shall have a new birth of freedom, and that',
-# 'government of the people, by the people, for the people shall',
-# 'not perish from the earth.']
+import string
+dead_men_tell_tales = ['Four score and seven years ago our fathers brought forth on this',
+'continent a new nation, conceived in liberty and dedicated to the',
+'proposition that all men are created equal. Now we are engaged in',
+'a great civil war, testing whether that nation or any nation so',
+'conceived and so dedicated can long endure. We are met on a great',
+'battlefield of that war. We have come to dedicate a portion of',
+'that field as a final resting-place for those who here gave their',
+'lives that that nation might live. It is altogether fitting and',
+'proper that we should do this. But in a larger sense, we cannot',
+'dedicate, we cannot consecrate, we cannot hallow this ground.',
+'The brave men, living and dead who struggled here have consecrated',
+'it far above our poor power to add or detract. The world will',
+'little note nor long remember what we say here, but it can never',
+'forget what they did here. It is for us the living rather to be',
+'dedicated here to the unfinished work which they who fought here',
+'have thus far so nobly advanced. It is rather for us to be here',
+'dedicated to the great task remaining before us--that from these',
+'honored dead we take increased devotion to that cause for which',
+'they gave the last full measure of devotion--that we here highly',
+'resolve that these dead shall not have died in vain, that this',
+'nation under God shall have a new birth of freedom, and that',
+'government of the people, by the people, for the people shall',
+'not perish from the earth.']
 
 # 1. Join everything
+
+# Loop over the text and join it together
+text = ''.join(str(i) for i in dead_men_tell_tales)
+print("")
+print(text)
+
 # 2. Remove spaces
+
+text_no_sp = text.replace(" ", "")
+print("")
+print(text_no_sp)
+
 # 3. Occurrence probabilities for letters
+
+# Before counting the probabilities, we need to convert all of the text to lowercase and remove punctuation.
+
 # 4. Tell me transition probabilities for every letter pairs
 # 5. Make a 26x26 graph of 4. in numpy
 # #optional
