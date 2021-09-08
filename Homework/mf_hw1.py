@@ -46,7 +46,8 @@ print(sample.index('b'))  # see where 'b' appears in our sample
 
 # By specifying a value and integer within index(), we can specify where the
 # function should start looking. Using our previous example, if we start at
-# index position 2, we should get an error.
+# index position 2, we should get an error. Here I've added an error message so
+# that the code doesn't stop.
 try:
     sample_position = sample.index('b', 2)
 except ValueError:
@@ -56,41 +57,41 @@ except ValueError:
 
 # insert() allows us to put an item into an existing list by specifying the
 # position and the item.
-sample.insert(2, 7335)
-print(sample)
+sample.insert(2, 7335)  # inster the course number into sample at position 2
+print(sample)           # check out results
 
 ## remove()
 
 # remove() works the same as insert, but does not require us to specify the
 # position, only the item to be removed. We'll remove the course number that we
 # inserted in the previous example.
-sample.remove(7335)
-print(sample)
+sample.remove(7335)  # remove the course number
+print(sample)        # check out results
 
 ## pop()
 
 # pop() allows us to pull an off of our list. We'll remove 'd'.
-sample.pop(sample.index('d'))
-print(sample)
+sample.pop(sample.index('d'))  # remove 'd'
+print(sample)                  # check out results
 
 ## count()
 
 # count() returns the number of times a value appears in a list. Let's check the
 # letter 'c'.
-sample_count = sample.count("c")
-print(sample_count)
+sample_count = sample.count("c")  # count instances of 'c'
+print(sample_count)               # check out results
 
 ## reverse()
 
 # reverse() does what it says on the tin - reverses a list.
-sample_reverse = sample.reverse()
-print(sample_reverse)
+sample_reverse = sample.reverse()  # reverse our sample string
+print(sample_reverse)              # check out results
 
 ## sort()
 
 # Sorts a list alphabetically. 
-sample_sort = sample.sort()
-print(sample_sort)
+sample_sort = sample.sort()  # sort our sample
+print(sample_sort)           # check out results
 
 ## [1]+[1]
 
@@ -139,17 +140,59 @@ print([y*2 for x in [[1,2],[3,4]] for y in x])
 # count() will return how many times an element appears. For example, how many
 # times does the number '3' appear in the first 16 digits of pi?
 # 3.141592653589793
-pi_count = (3,1,4,1,5,9,2,6,5,3,5,8,9,7,9,3)
-print(pi_count.count(3))
+pi_count = (3,1,4,1,5,9,2,6,5,3,5,8,9,7,9,3)  # Define pi to the 15th digit
+print(pi_count.count(3))                      # Print how many times '3' appears
 
-# index()
+## index()
 
 # index() will return the position of the first occurance of the value. For
 # example, the first occurance of the number '9' is at index:
 print(pi_count.index(9))
 
-# build a dictionary from tuples
-# unpack tuples
+## build a dictionary from tuples
+
+# Current Formula 1 constructors
+f1_constructors = [('Mercedes', 'M'), 
+                   ('Red Bull', 'R'), 
+                   ('McLaren', 'Mc'), 
+                   ('AlphaTauri', 'AT'),
+                   ('Williams', 'W'), 
+                   ('Aston Martin', 'AM'),
+                   ('Alpha Romeo', 'AR'),
+                   ('Haas', 'H'),
+                   ('Ferrari', 'F'),
+                   ('Alpine', 'A')]
+
+# Fuction to convert tuples into a dictionary
+def tup_to_dict(tup, dic):
+    dic = dict(tup)
+    return dic
+
+# Initialize an empty dictionary
+dictionary = {}
+
+# Print the dictionary
+print(tup_to_dict(f1_constructors, dictionary))
+
+## unpack tuples
+
+# Define a tuple containing the current current top 10 F1 driver's standings
+f1_drivers = ('Verstappen', 
+              'Lewis', 
+              'Bottas', 
+              'Norris', 
+              'Perez', 
+              'Leclerc', 
+              'Sainz', 
+              'Gasly', 
+              'Ricciardo', 
+              'Alonso')
+
+# Define the individual values
+(position1, position2, position3, position4, position5, position6, position7, position8, position9, position10) = f1_drivers
+
+# Print the top 3 standings
+print(position1, position2, position3)
 
 # ╔═════════════════════╗
 # ║     Dictionary        ║
@@ -183,7 +226,7 @@ print("leave" in a_dict.values())
 ## del a_dict['me']
 
 # The del function allows us to delete an entry in a dictionary.
-del a_dict['me']
+del a_dict['I hate']
 print(a_dict)
 
 ## a_dict.clear()
@@ -260,10 +303,7 @@ print(set_sample1.pop())
 # remove() works very similarly to discard(), however remove() will raise an
 # error if the item doesn't exist. 
 set_sample1 = {"chocolate", "vanilla", "oreo"}
-try:
-    set_sample1.remove("mint")
-except ValueError:
-    print("Value is not in the list.")
+# set_sample1.remove("mint")
 
 ## union()
 
@@ -361,12 +401,35 @@ print(sample_zfill.zfill(5))
 # ╚═════════════════════╝
 
 from collections import Counter
+from numpy import array, float_power
 
-from numpy import float_power
-
-# from itertools import * (Bonus: this one is optional, but recommended)
-
-flower_orders=['W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y','B/Y','B/Y','B/Y','B/Y','B/Y','R/B/Y','R/B/Y','R/B/Y','R/B/Y','R/B/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/G','W/G','W/G','W/G','R/Y','R/Y','R/Y','R/Y','N/R/V/Y','N/R/V/Y','N/R/V/Y','N/R/V/Y','W/R/B/V','W/R/B/V','W/R/B/V','W/R/B/V','W/N/R/V/Y','W/N/R/V/Y','W/N/R/V/Y','W/N/R/V/Y','N/R/Y','N/R/Y','N/R/Y','W/V/O','W/V/O','W/V/O','W/N/R/Y','W/N/R/Y','W/N/R/Y','R/B/V/Y','R/B/V/Y','R/B/V/Y','W/R/V/Y','W/R/V/Y','W/R/V/Y','W/R/B/V/Y','W/R/B/V/Y','W/R/B/V/Y','W/N/R/B/Y','W/N/R/B/Y','W/N/R/B/Y','R/G','R/G','B/V/Y','B/V/Y','N/B/Y','N/B/Y','W/B/Y','W/B/Y','W/N/B','W/N/B','W/N/R','W/N/R','W/N/B/Y','W/N/B/Y','W/B/V/Y','W/B/V/Y','W/N/R/B/V/Y/G/M','W/N/R/B/V/Y/G/M','B/R','N/R','V/Y','V','N/R/V','N/V/Y','R/B/O','W/B/V','W/V/Y','W/N/R/B','W/N/R/O','W/N/R/G','W/N/V/Y','W/N/Y/M','N/R/B/Y','N/B/V/Y','R/V/Y/O','W/B/V/M','W/B/V/O','N/R/B/Y/M','N/R/V/O/M','W/N/R/Y/G','N/R/B/V/Y','W/R/B/V/Y/P','W/N/R/B/Y/G','W/N/R/B/V/O/M','W/N/R/B/V/Y/M','W/N/B/V/Y/G/M','W/N/B/V/V/Y/P']
+flower_orders=['W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B',
+               'W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B',
+               'W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B',
+               'W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R/B','W/R','W/R',
+               'W/R', 'W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R','W/R',
+               'W/R','W/R','W/R','W/R','R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y',
+               'R/V/Y','R/V/Y','R/V/Y','R/V/Y','R/V/Y','W/R/V','W/R/V','W/R/V',
+               'W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V','W/R/V',
+               'W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V','W/N/R/V',
+               'W/N/R/V','W/N/R/V','W/R/B/Y','W/R/B/Y','W/R/B/Y','W/R/B/Y',
+               'W/R/B/Y','W/R/B/Y','B/Y','B/Y','B/Y','B/Y','B/Y','R/B/Y',
+               'R/B/Y','R/B/Y','R/B/Y','R/B/Y','W/N/R/B/V/Y','W/N/R/B/V/Y',
+               'W/N/R/B/V/Y','W/N/R/B/V/Y','W/N/R/B/V/Y','W/G','W/G','W/G',
+               'W/G','R/Y','R/Y','R/Y','R/Y','N/R/V/Y','N/R/V/Y','N/R/V/Y',
+               'N/R/V/Y','W/R/B/V','W/R/B/V','W/R/B/V','W/R/B/V','W/N/R/V/Y',
+               'W/N/R/V/Y','W/N/R/V/Y','W/N/R/V/Y','N/R/Y','N/R/Y','N/R/Y',
+               'W/V/O','W/V/O','W/V/O','W/N/R/Y','W/N/R/Y','W/N/R/Y','R/B/V/Y',
+               'R/B/V/Y','R/B/V/Y','W/R/V/Y','W/R/V/Y','W/R/V/Y','W/R/B/V/Y',
+               'W/R/B/V/Y','W/R/B/V/Y','W/N/R/B/Y','W/N/R/B/Y','W/N/R/B/Y',
+               'R/G','R/G','B/V/Y','B/V/Y','N/B/Y','N/B/Y','W/B/Y','W/B/Y',
+               'W/N/B','W/N/B','W/N/R','W/N/R','W/N/B/Y','W/N/B/Y','W/B/V/Y',
+               'W/B/V/Y','W/N/R/B/V/Y/G/M','W/N/R/B/V/Y/G/M','B/R','N/R','V/Y',
+               'V','N/R/V','N/V/Y','R/B/O','W/B/V','W/V/Y','W/N/R/B','W/N/R/O',
+               'W/N/R/G','W/N/V/Y','W/N/Y/M','N/R/B/Y','N/B/V/Y','R/V/Y/O',
+               'W/B/V/M','W/B/V/O','N/R/B/Y/M','N/R/V/O/M','W/N/R/Y/G',
+               'N/R/B/V/Y','W/R/B/V/Y/P','W/N/R/B/Y/G','W/N/R/B/V/O/M',
+               'W/N/R/B/V/Y/M','W/N/B/V/Y/G/M','W/N/B/V/V/Y/P']
 
 # 1. Build a counter object and use the counter and confirm they have the same values.
 
@@ -519,59 +582,100 @@ dead_men_tell_tales = ['Four score and seven years ago our fathers brought forth
 
 # Loop over the text and join it together
 text = ''.join(str(i) for i in dead_men_tell_tales)
-print(text)
+print('\n', text)
 
 # 2. Remove spaces
 
 text_no_sp = text.replace(" ", "")
-print(text_no_sp)
+print('\n,', text_no_sp)
 
 # 3. Occurrence probabilities for letters
 
 # Before counting the probabilities, we need to convert all of the text to
 # lowercase and remove punctuation.
-
 text_clean = text_no_sp.lower()
 import re
 text_clean =re.sub(r'[^\w\s]', '', text_clean)
 
+# Define the counter and the total number of letters
 text_counter = Counter(text_clean)
 text_letters = len(text_clean)
 
+# Calculate the percentage of how often a letter appears, rounding to two
+# decimal places
 print('')
 for key in sorted(text_counter, key = text_counter.get, reverse = True):
     print(key, "appears", round((text_counter[key] / text_letters*100), 2), "% of the time.")
 
 # 4. Tell me transition probabilities for every letter pairs
 
-def construct_transition_dictionary(list_of_lists):
-    all_transition_tuples = []
-    for l in list_of_lists:
-        for idx in range(len(l) - 1):
-            all_transition_tuples.append((l[idx], l[idx + 1]))
-    cnt = Counter(all_transition_tuples)
-    ret = {}
-    for k, v in cnt.items():
-        total = sum([y for x, y in cnt.items() if x[0] == k[0]])
-        ret[k] = v/float(total)
-    return ret
+import numpy as np
+import string
 
-sample_transition_dictionary = construct_transition_dictionary(text_clean)
-sample_transition_dictionary
+# Define an empty numpy array
+transition_probabilities = np.zeros((26, 26))
 
-state_space = list(set([x for y in sample_transition_dictionary.keys() for x in y]))
-state_space
+# For the length of the text, count the number of instances of each letter pair
+# and place them in the empty array
+for i in range(text_letters - 1):
+    x = string.ascii_lowercase.index(text_clean[i])
+    y = string.ascii_lowercase.index(text_clean[i + 1])
+    transition_probabilities[x, y] = transition_probabilities[x, y] + 1
+counter = transition_probabilities.sum(axis = 1)
 
-build_save_graph(sample_transition_dictionary, state_space, save_loc = '')
+# Define a new array to hold our probabilities
+probability_array = np.zeros((26, 26))
 
-# 5. Make a 26x26 graph of 4. in numpy
+# Initialize our starting value at 0
+i = 0
 
+# For each row, calculate the probability of the value we found previously,
+# given the total number of instances seen.
+for row in transition_probabilities:
+    j = 0
 
+    for cell in row:
+        if counter[i] != 0:
+            probability_value = cell / counter[i]
+        if np.isnan(probability_value):
+            probability_value = 0
+        probability_array[i, j] = probability_value
+        j += 1
+    i += 1
+
+# Print the result array shape as well as the array itself
+print(probability_array.shape)
+print(probability_array)
 
 # #optional
 # 6. plot graph of transition probabilities from letter to letter
 
+import seaborn as sns
+
+# Get the letters in the alphabet
+letters = list(string.ascii_lowercase)
+
+# Create a heatmap using the values from the probability array defined previously
+heatmap = sns.heatmap(probability_array, xticklabels=letters, yticklabels=letters)
+plt.xlabel("Second Letter")
+plt.ylabel("First Letter")
+plt.title("Gettysburg Address\nLetter Transition Heap Map")
+plt.show()
+
 # Unrelated:
 # 7. Flatten a nested list
+
+# Build a nested list
+nested_list = ['1', ['2', '3', '4', ['5', '6', '7'], '8', '9'], '10', '11']
+
+# Flatten using base python
+flattened_nested_list = [y for x in nested_list for y in x]
+print(flattened_nested_list)
+
+# Flatten using itertools
+import itertools
+flattened_nested_list_2 = list(itertools.chain(*nested_list))
+print(flattened_nested_list_2)
+
 # Cool intro python resources:
 # https://thomas-cokelaer.info/tutorials/python/index.html
