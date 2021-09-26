@@ -89,205 +89,213 @@
 # ╔═════════════════════╗
 # ║        Setup          ║
 # ╚═════════════════════╝
+
 import numpy as np
-import itertools as it
+import itertools
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import KFold
+from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import cross_val_score
-from sklearn.preprocessing import StandardScaler
-from sklearn import datasets
-import matplotlib.pyplot as plt
+import re
 
-# %%
-# ╔═════════════════════╗
-# ║Build Custom gridsearch║
-# ╚═════════════════════╝
-class GridSearch(object):
-
-    # ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
-    #  Define: init
-    # └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
-    def __init__(self, X, y, models_params={}, metrics=[]):
-        self.M = X
-        self.L = y
-        self.models_params = models_params
-        self.metrics = metrics
-        self.grid_results = []
-        self.best_scores = []
-        self.best_metrics = {}
-
-        # For each model parameter, we will have a classifier object (clf), a
-        # best score, and a best parameter(s) that we will want to store. Here
-        # we initialize a dictionary to hold those values.
-        for i in models_params:
-            self.best_scores.append(
-                {
-                    "clf": i,
-                    "best_scores": dict.fromkeys(metrics, 0),
-                    "best_params": {k: {} for k in metrics},
-                }
-            )
-
-        # Create a dictionary to store the best metrics
-        self.best_metrics = {k: [] for k in metrics}
-
-    # ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
-    #  Define: gridsearch
-    # └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
-    def grid_search(self):
-        for model, params in self.models_params.items():
-            print("Evaluating", model.__name__)
-            keys, values = zip(*params.items())
-            paramsToPassToRun = [
-                dict(zip(keys, value)) for value in it.product(*values)
-            ]
-            for runParams in paramsToPassToRun:
-                results = self.__run(model, runParams, self.metrics)
-                self.grid_results.append(results)
-        # Update our metrics structure
-        for model in self.best_scores:
-            for metric in model["best_scores"]:
-                self.best_metrics[metric].append(model["best_scores"][metric])
-        return self.best_scores
-
-    # ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
-    #  Define: run
-    # └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
-    def __run(self, a_clf, clf_hyper={}, clf_metrics={}):
-        clf = a_clf(**clf_hyper)  # unpack parameters into clf as they exist
-
-        ret = {}
-
-        for metric in clf_metrics:
-            scores = cross_val_score(
-                clf, X=self.M, y=self.L, cv=5, scoring=metric, n_jobs=-1
-            )
-            ret.update({"clf": clf, "clf_params": clf_hyper, metric: scores})
-
-            # Update our collection of best mean scores
-            mean_score = scores.mean()
-            for model in self.best_scores:
-                if model["clf"] == a_clf and model["best_scores"][metric] < mean_score:
-                    model["best_scores"][metric] = mean_score
-                    model["best_params"][metric] = clf_hyper
-
-        return ret
-
-    # ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
-    #  Define: print
-    # └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
-    def print_scores(self):
-        for model in self.best_scores:
-            print(model["clf"].__name__)
-
-            for metric in model["best_scores"]:
-                print(
-                    metric,
-                    "{:.2f}".format(model["best_scores"][metric]),
-                    "-",
-                    model["best_params"][metric],
-                )
-
-    # ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
-    #  Define: plot
-    # └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
-    def plot_metric_scores(self):
-        clfs_list = [clf.__name__ for clf in model_params]
-        num_plots = len(gs.best_metrics)
-        index = 0
-
-        plt.figure(figsize=(16, 8))
-        for metric in gs.best_metrics:
-            index = index + 1
-            plt.subplot(num_plots, 2, index)
-            # plt.ylim(0, 1)
-            plt.title(metric)
-            plt.plot(clfs_list, gs.best_metrics[metric])
-        plt.tight_layout()
-        # plt.subplots_adjust(left=0.125, right=0.9, bottom=0.1, top=0.9, wspace=0.2, hspace=1)
-        plt.show()
-
-
-# %%
-# ╔═════════════════════╗
-# ║    Test Using iris    ║
-# ╚═════════════════════╝
-
-# ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
-#  Define: data
-# └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
 #  During class and office hours, it was advised that limiting our data to a
 #  binary classification would be an easier undertaking than building something
 #  that could handle a multi-class classification problem. I'd intended to use
 #  the iris dataset, but it has three classes. I'll limit the data to only two
 #  classes instead.
 iris = datasets.load_iris()
-X = iris.data[50:]
-y = iris.target[50:]
+M = iris.data[50:]  #
+L = iris.target[50:]
 
-scaler = StandardScaler()
-scaler.fit(X)
-X_std = scaler.transform(X)
+# Define the number of folds
+n_folds = 5
+
+# Define 'data'
+data = (M, L, n_folds)
 
 # %%
-# ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
-#  Define: models & hyperparameters
-# └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
-model_params = {
-    RandomForestClassifier: {
-        # "n_estimators" : [100, 200, 500, 1000],
-        "n_estimators": [50, 100],
+# ╔══════════════════════╗
+# ║Models & Hyperparameters║
+# ╚══════════════════════╝
+
+# Define the initial set of models we want to compare as a dictionary. Because
+# this is a dictionary we can add/remove as needed.
+model_dict = {
+    "RandomForestClassifier": RandomForestClassifier,
+    "KNeighboursClassifier": KNeighborsClassifier,
+    "LogisticRegression": LogisticRegression,
+}
+
+# Define the optimization parameters for the models above.
+model_params_dict = {
+    "RandomForestClassifier": {
+        "n_estimators": [100, 200, 500, 1000],
         "max_features": ["auto", "sqrt", "log2"],
         "bootstrap": [True],
         "criterion": ["gini", "entropy"],
         "oob_score": [True, False],
     },
-    KNeighborsClassifier: {
+    "KNeighboursClassifier": {
         "n_neighbors": np.arange(3, 15),
         "weights": ["uniform", "distance"],
         "algorithm": ["ball_tree", "kd_tree", "brute"],
     },
-    LogisticRegression: {
+    "LogisticRegression": {
         "solver": ["newton-cg", "sag", "lbfgs"],
         "multi_class": ["ovr", "multinomial"],
     },
 }
 
-metrics = ["accuracy", "roc_auc", "recall", "precision"]
-n_folds = 5
+# %%
+# ╔══════════════════════╗
+# ║ Define: run            ║
+# ╚══════════════════════╝
+#
+# This code was provided as part of the instructions for the assignment.
+def run(a_clf, data, clf_hyper={}):
+    M, L, n_folds = data  # Unpack data container
+    kf = KFold(n_splits=n_folds)  # Establish the cross-validation
+    ret = {}  # Classic explication of results
+
+    for ids, (train_index, test_index) in enumerate(kf.split(M, L)):
+        clf = a_clf(**clf_hyper)  # Dictionary unpacking
+
+        clf.fit(M[train_index], L[train_index])
+
+        pred = clf.predict(M[test_index])
+
+        ret[ids] = {
+            "clf": clf,
+            "train_index": train_index,
+            "test_index": test_index,
+            "accuracy": accuracy_score(L[test_index], pred),
+        }
+
+    return ret
+
 
 # %%
-# ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐
-#  Run gridsearch
-# └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘
-gs = GridSearch(X=X_std, y=y, models_params=model_params, metrics=metrics)
+# ╔══════════════════════╗
+# ║ Define: plots          ║
+# ╚══════════════════════╝
 
-best_scores = gs.grid_search()
 
-# Print scores
-gs.print_scores()
+def plot_parameters(accuracy_dict, filename="Model_Histograms_"):
 
-# Print plots
-gs.plot_metric_scores()
+    # define filename parameters
+    filename_prefix = filename
+    plot_num = 1
+
+    # Determine the maximum number of k-folds for each histogram y-axis
+    n = max(len(v_i) for k_i, v_i in accuracy_dict.items())
+
+    # Create the histograms using matplotlib
+    # For each key in accuracy_dict, we'll create a new histogram with a given
+    # key's values
+    for k_i, v_i in accuracy_dict.items():
+
+        # Define the plot size
+        fig = plt.figure(figsize=(10, 10))
+
+        # Create the histograms
+        plt.hist(v_i, facecolor="skyblue")
+
+        # Set tick marks
+        plt.xticks(np.arange(0, 1.1, 0.1))
+        plt.yticks(np.arange(0, n + 1, 1))
+
+        # Set title and axis parameters
+        plt.title(k_i, fontsize=18)
+        plt.xlabel("Classifer Accuracy (By K-Fold)", fontsize=14)
+        plt.ylabel("Frequency", fontsize=14)
+
+        # Define plot names and numbers
+        plot_num_str = str(plot_num)
+        filename = filename_prefix + plot_num_str
+        plt.savefig(filename, bbox_inches="tight")
+        plot_num = plot_num + 1
+
+    plt.show()
+
 
 # %%
-# ╔═════════════════════╗
-# ║  Compare to sklearn   ║
-# ╚═════════════════════╝
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import ShuffleSplit
+# ╔══════════════════════════╗
+# ║Define: group classifiers ║
+# ╚══════════════════════════╝
 
-lr = LogisticRegression()
-model_params = {
-    "solver": ["newton-cg", "sag", "lbfgs"],
-    "multi_class": ["ovr", "multinomial"],
-}
-# make CV spit 80/20 object
-num_cv_iterations = 3
-cv_object = ShuffleSplit(n_splits=num_cv_iterations, test_size=0.2)
 
-clf = GridSearchCV(lr, model_params, scoring="roc_auc", cv=cv_object)
-clf.fit(X_std, y)
+def best_classifiers(results_dict):
+    accuracy_dict = {}
 
-print("Best: %f using %s" % (clf.best_score_, clf.best_params_))
+    for key in results_dict:
+        k_i = results_dict[key]["clf"]
+        v_i = results_dict[key]["accuracy"]
+        k_iTest = str(k_i)
+
+        # Remove extra spaces from k_iTest
+        k_iTest = re.sub("\s\s+", " ", k_iTest)
+
+        # Check if the string value 'k_iTest' exists as a key in the dictionary
+        if k_iTest in accuracy_dict:
+            accuracy_dict[k_iTest].append(
+                v_i
+            )  # append the values to create an array (techically a list) of values
+        else:
+            accuracy_dict[k_iTest] = [
+                v_i
+            ]  # create a new key (k_iTest) in accuracy_dict with a new value, (v_i)
+
+    return accuracy_dict
+
+
+# %%
+# ╔═══════════════════════════════╗
+# ║Define: hyperparameter search  ║
+# ╚═══════════════════════════════╝
+
+
+def hyper_search(model_dict, param_dict, data, filename=""):
+    # define empty dictionaries to start
+    np_results = {}
+    accuracyDics = {}
+
+    # iterate through the model dictionary to execute each model
+    for key, value in model_dict.items():
+        # Let the user know which model we're processing
+        print("Processing Model: ", key)
+
+        # Get the hyperparameter dictionary listings for the specific model
+        paramDict = param_dict[key]
+
+        # Use itertools to build out all possible hyperparameter permutations
+        # for execution
+        keys1, values1 = zip(*paramDict.items())
+        paramList = [dict(zip(keys1, v)) for v in itertools.product(*values1)]
+
+        # iterate through the hyper parameter permutations and execute them
+        for dic in paramList:
+            # execute the run function on each model type and hyper parameter configuration
+            # add the results to the np_results dictionary for use in other methods
+            np_results.update(run(value, data, dic))
+        # results = run(value, data, dic)
+
+        # find the classifiers for plotting from all the permutations we've run through
+        # this will get us to the "best" permutation of results to plot and prevent us
+        # from printing 100's of plots
+        accuracyDics.update(best_classifiers(np_results))
+
+    # plot the parameters
+    plot_parameters(accuracyDics, filename)
+
+
+# %%
+# ╔═══════════════╗
+# ║Run gridsearch ║
+# ╚═══════════════╝
+hyper_search(model_dict, model_params_dict, data, "MF_Model_Histograms_")
+
+# %%
