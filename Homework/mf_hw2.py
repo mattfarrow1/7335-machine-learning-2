@@ -3,6 +3,13 @@
 # +-+-+-+-+-+-+-+-+
 # Matt Farrow
 
+# Note: this project's code is adapted from the work that Dan Crouthamel & Fabio
+# Savorgnan previously did in this class. Although my intention had been to
+# re-write the code in my own style as I worked through it, the final product
+# bears a much stronger resemblance to the original work than I would like.
+#
+# https://github.com/bSharpCyclist/MSDS-7335-ML2/blob/main/GridSearch.py
+
 # %%
 # ╔══════════╗
 #   Libraries
@@ -67,13 +74,13 @@ class death_to_gridsearch(object):
     def __init__(self, M, L, parameters={}, metrics=[]):
         self.M = M  # equivalent to X, defined on line 31
         self.L = L  # equivalent to y, defined on line 32
-        self.parameters = parameters
-        self.metrics = metrics
+        self.parameters = parameters  # model hyperparameters
+        self.metrics = metrics  # scoring metrics
         self.grid_results = []  # create a list for our results
         self.top_scores = []  # create a list for the top scores
         self.top_metrics = {
             k: [] for k in metrics
-        }  # create a dictionary that contains a list of the top metrics
+        }  # dictionary that contains a list of the top metrics
 
         # Initialize the top_scores dictionary that will be used when we save
         # our top performing model results to a JSON file. The dictionary will
@@ -84,10 +91,12 @@ class death_to_gridsearch(object):
                 {
                     "clf": p,
                     "top_scores": dict.fromkeys(metrics, 0),
+                    "best_parameters": {k: {} for k in metrics},
                     "top_parameters": {k: {} for k in metrics},
                 }
             )
 
+        # Initialize the top_metrics dictionary
         self.top_metrics = {k: [] for k in metrics}
 
     # Define the actual grid search
@@ -104,7 +113,10 @@ class death_to_gridsearch(object):
             # classifier/hyperparameter combinations to test
             keys, values = zip(*params.items())
             parameters_to_run = [
-                dict(zip(keys, value)) for value in it.product(*values)
+                dict(zip(keys, value))
+                for value in it.product(
+                    *values
+                )  # itertools' product function recommendation from Discord
             ]
 
             # Save the restults to the grid_results list
@@ -117,24 +129,26 @@ class death_to_gridsearch(object):
         for model in self.top_scores:
             for metric in model["top_scores"]:
                 self.top_metrics[metric].append(model["top_scores"][metric])
-
         return self.top_scores
 
     def __run(self, a_clf, clf_hyper={}, clf_metrics={}):
-        clf = a_clf(**clf_hyper)
+        clf = a_clf(**clf_hyper)  # unpack the hyperparameters
         ret = {}
 
+        # For each metric, calculate a score using 5-fold cross-validation
         for metric in clf_metrics:
             scores = cross_val_score(
                 clf, X=self.M, y=self.L, cv=5, scoring=metric, n_jobs=-1
             )
-            ret.update({"clf": clf, "clf_params": clf_hyper, metric: scores})
+            # ret.update({"clf": clf, "clf_params": clf_hyper, metric: scores})
+            ret.update({"clf": clf, "top_parameters": clf_hyper, metric: scores})
 
             # Update our collection of best mean scores
             mean_score = scores.mean()
             for model in self.top_scores:
                 if model["clf"] == a_clf and model["top_scores"][metric] < mean_score:
                     model["top_scores"][metric] = mean_score
+                    model["best_parameters"][metric] = clf_hyper
                     model["top_parameters"][metric] = clf_hyper
 
         return ret
@@ -151,6 +165,7 @@ class death_to_gridsearch(object):
                     metric,
                     "{:.2f}".format(model["top_scores"][metric]),
                     "-",
+                    model["best_parameters"][metric],
                     model["top_parameters"][metric],
                 )
 
