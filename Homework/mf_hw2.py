@@ -1,218 +1,46 @@
-# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃                                                                              ┃
-# ┃  __  __         _    _            _                      _             ___   ┃
-# ┃ |  \/  |__ _ __| |_ (_)_ _  ___  | |   ___ __ _ _ _ _ _ (_)_ _  __ _  |_  )  ┃
-# ┃ | |\/| / _` / _| ' \| | ' \/ -_) | |__/ -_) _` | '_| ' \| | ' \/ _` |  / /   ┃
-# ┃ |_|  |_\__,_\__|_||_|_|_||_\___| |____\___\__,_|_| |_||_|_|_||_\__, | /___|  ┃
-# ┃                                                                |___/         ┃
-# ┃                                                                              ┃
-# ┃                            +-+-+-+-+-+-+-+-+ +-+                             ┃
-# ┃                            |H|o|m|e|w|o|r|k| |2|                             ┃
-# ┃                            +-+-+-+-+-+-+-+-+ +-+                             ┃
-# ┃                                                                              ┃
-# ┃                                 Matt Farrow                                  ┃
-# ┃            https://github.com/mattfarrow1/7335-machine-learning-2            ┃
-# ┃                                                                              ┃
-# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+# +-+-+-+-+-+-+-+-+
+# |M|L|2| |H|W| |2|
+# +-+-+-+-+-+-+-+-+
+# Matt Farrow
 
-# ╔═════════════╗
-#   Instructions
-# ╚═════════════╝
-
-# This is called DeathToGridSearch because with this example you will never have
-# to think about how to manage a large number of classifiers etc simultaneously.
-# You will now be able to run and collect results in a very straightforward
-# manner. #LongLongLiveGridSearch!
-
-# import numpy as np
-# from sklearn.metrics import accuracy_score # other metrics too pls!
-# from sklearn.ensemble import RandomForestClassifier # more!
-# from sklearn.model_selection import KFold
-
-# Adapt this code below to run your analysis
-# 1. Write a function to take a list or dictionary of CLFs and hypers (i.e. use
-#    logistic regression), each with 3 different sets of hyperparameters for
-#    each
-# 2. Expand to include larger number of classifiers and hyperparameter settings
-# 3. Find some simple data
-# 4. Generate matplotlib plots that will assist in identifying the optimal CLF
-#    and parampters settings
-# 5. Please set up your code to be run and save the results to the directory
-#    that its executed from
-# 6. Investigate grid search function
-
-# M = np.array([[1,2],[3,4],[4,5],[4,5],[4,5],[4,5],[4,5],[4,5]])
-# L = np.ones(M.shape[0])
-# n_folds = 5
-
-# data = (M, L, n_folds)
-
-# def run(a_clf, data, clf_hyper={}):
-#   M, L, n_folds = data               # Unpack data container
-#   kf = KFold(n_splits=n_folds)       # Establish the cross validation
-#   ret = {}                           # Classic explication of results
-
-#   for ids, (train_index, test_index) in enumerate(kf.split(M, L)):
-#     clf = a_clf(**clf_hyper) # unpack parameters into clf is they exist
-#     clf.fit(M[train_index], L[train_index])
-#     pred = clf.predict(M[test_index])
-#     ret[ids]= {'clf': clf,
-#                'train_index': train_index,
-#                'test_index': test_index,
-#                'accuracy': accuracy_score(L[test_index], pred)}
-#   return ret
-
-# results = run(RandomForestClassifier, data, clf_hyper={})
-
-# ╔══════════════════╗
-#   Define Objectives
-# ╚══════════════════╝
-
-# Inputs
-#   - list or dictionary of classifiers and hyperparameters
-
-# For each classifier:
-#   - build a hyperparameter grid (sklearn function help - ParameterGrid)
-
-# for each parameter set:
-#   - set the model parameters
-#   - (model.set_params(**params_dict))
-#   - cross-fold validate (make this a fuction)
-#   - store score (returned at the end of the function)
-
-# ╔═══════╗
-#   Setup
-# ╚═══════╝
+# %%
+# ╔══════════╗
+#   Libraries
+# ╚══════════╝
 
 import numpy as np
 import itertools as it
-from sklearn.model_selection import KFold
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.model_selection import cross_val_score
-from sklearn.preprocessing import StandardScaler
 from sklearn import datasets
 import matplotlib.pyplot as plt
+import json
 
-# ╔═════════════════╗
-#   Create gridsearch
-# ╚═════════════════╝
-class death_to_gridsearch(object):
-    def __init__(self, M, L, parameters={}, metrics=[]):
-        self.M = M
-        self.L = L
-        self.parameters = parameters
-        self.metrics = metrics
-        self.grid_results = []
-        self.top_scores = []
-        self.top_metrics = {k: [] for k in metrics}
-
-        for p in parameters:
-            self.top_scores.append(
-                {
-                    "clf": p,
-                    "top_scores": dict.fromkeys(metrics, 0),
-                    "best_params": {k: {} for k in metrics},
-                }
-            )
-
-        # # Create container based on metric
-        # # This will be a list of best scores for a given metric, in the order of input classifiers
-        # self.top_metrics = {k: [] for k in metrics}
-
-    def grid_search(self):
-        for model, params in self.parameters.items():
-            print("")
-            print("Running", model.__name__, "model")
-
-            keys, values = zip(*params.items())
-            parameters_to_run = [
-                dict(zip(keys, value)) for value in it.product(*values)
-            ]
-
-            for run_hyper in parameters_to_run:
-                results = self.__run(model, run_hyper, self.metrics)
-                self.grid_results.append(results)
-
-        for model in self.top_scores:
-            for metric in model["top_scores"]:
-                self.top_metrics[metric].append(model["top_scores"][metric])
-
-        return self.top_scores
-
-    # Our run implementation is a bit different than what was assigned.
-    # I changed it to use cross_val_score
-    def __run(self, a_clf, clf_hyper={}, clf_metrics={}):
-        clf = a_clf(**clf_hyper)  # unpack parameters into clf
-
-        ret = {}
-
-        for metric in clf_metrics:
-            scores = cross_val_score(
-                clf, X=self.M, y=self.L, cv=5, scoring=metric, n_jobs=-1
-            )
-            ret.update({"clf": clf, "clf_params": clf_hyper, metric: scores})
-
-            # Update our collection of best mean scores
-            mean_score = scores.mean()
-            for model in self.top_scores:
-                if model["clf"] == a_clf and model["top_scores"][metric] < mean_score:
-                    model["top_scores"][metric] = mean_score
-                    model["best_params"][metric] = clf_hyper
-
-        return ret
-
-    def print_scores(self):
-        for model in self.top_scores:
-            print("")
-            print(model["clf"].__name__)
-
-            for metric in model["top_scores"]:
-                print(
-                    metric,
-                    "{:.2f}".format(model["top_scores"][metric]),
-                    "-",
-                    model["best_params"][metric],
-                )
-
-    def plot_scores(self, save_path):
-        clfs_list = [clf.__name__ for clf in models_and_hypers]
-        num_plots = len(gridsearch.top_metrics)
-        index = 0
-        # Printing two plots side-by-side, so make our figure a rectangle
-        plt.figure(figsize=(16, 8))
-        for metric in gridsearch.top_metrics:
-            index = index + 1
-            plt.subplot(num_plots, 2, index)
-            plt.title(metric)
-            plt.plot(clfs_list, gridsearch.top_metrics[metric])
-            plt.savefig(f"{save_path}_Scores.png")
-        plt.tight_layout()
-        plt.show()
-
-
+# %%
 # ╔════════════╗
 #   Define Data
 # ╚════════════╝
 
 #  During class and office hours, it was advised that limiting our data to a
 #  binary classification would be an easier undertaking than building something
-#  that could handle a multi-class classification problem. I'd intended to use
-#  the iris dataset, but it has three classes. I'll limit the data to only two
-#  classes instead.
-iris = datasets.load_iris()
-M = iris.data[50:]
-L = iris.target[50:]
+#  that could handle a multi-class classification problem. Therefore, I decided
+#  instead to use the breast cancer dataset from sklearn.
+cancer = datasets.load_breast_cancer()
+M = cancer.data
+L = cancer.target
 
-# scaler = StandardScaler()
-# scaler.fit(M)
-# M_std = scaler.transform(M)
-
+# %%
 # ╔══════════════════════════════╗
 #   Define Models & Hyperparameters
 # ╚══════════════════════════════╝
 
+# Define the models
+models_list = [RandomForestClassifier, KNeighborsClassifier, SVC]
+
+# Define a dictionary containing sub-dictionaries of different models and
+# their associated hyperparameters.
 models_and_hypers = {
     RandomForestClassifier: {
         "n_estimators": [100, 200, 500, 1000],
@@ -226,35 +54,150 @@ models_and_hypers = {
         "weights": ["uniform", "distance"],
         "algorithm": ["ball_tree", "kd_tree", "brute"],
     },
-    LogisticRegression: {
-        "solver": ["newton-cg", "sag", "lbfgs"],
-        "multi_class": ["ovr", "multinomial"],
-    },
+    SVC: {"kernel": ["linear", "poly", "rbf"], "degree": [1, 3, 5]},
 }
 
-# Setup the metrics we want to test
-metrics = ["accuracy", "roc_auc", "recall", "precision"]
+# %%
+# ╔═════════════════╗
+#   Create gridsearch
+# ╚═════════════════╝
+class death_to_gridsearch(object):
 
+    # Declare the instance of the object of our gridsearch
+    def __init__(self, M, L, parameters={}, metrics=[]):
+        self.M = M  # equivalent to X, defined on line 31
+        self.L = L  # equivalent to y, defined on line 32
+        self.parameters = parameters
+        self.metrics = metrics
+        self.grid_results = []  # create a list for our results
+        self.top_scores = []  # create a list for the top scores
+        self.top_metrics = {
+            k: [] for k in metrics
+        }  # create a dictionary that contains a list of the top metrics
+
+        # Initialize the top_scores dictionary that will be used when we save
+        # our top performing model results to a JSON file. The dictionary will
+        # contain the classifier and its hyperparameters that performed the
+        # best.
+        for p in parameters:
+            self.top_scores.append(
+                {
+                    "clf": p,
+                    "top_scores": dict.fromkeys(metrics, 0),
+                    "top_parameters": {k: {} for k in metrics},
+                }
+            )
+
+        self.top_metrics = {k: [] for k in metrics}
+
+    # Define the actual grid search
+    def grid_search(self):
+
+        # Fore each classifier and its associated hyperparameters
+        for model, params in self.parameters.items():
+
+            # Print out which model is currently running
+            print("")
+            print("Running", model.__name__, "model")
+
+            # Use the zip() function to create a list of all of the possible
+            # classifier/hyperparameter combinations to test
+            keys, values = zip(*params.items())
+            parameters_to_run = [
+                dict(zip(keys, value)) for value in it.product(*values)
+            ]
+
+            # Save the restults to the grid_results list
+            for run_hyper in parameters_to_run:
+                results = self.__run(model, run_hyper, self.metrics)
+                self.grid_results.append(results)
+
+        # For each scoring metric, save the top performing metrics to the
+        # top_scores list
+        for model in self.top_scores:
+            for metric in model["top_scores"]:
+                self.top_metrics[metric].append(model["top_scores"][metric])
+
+        return self.top_scores
+
+    def __run(self, a_clf, clf_hyper={}, clf_metrics={}):
+        clf = a_clf(**clf_hyper)
+        ret = {}
+
+        for metric in clf_metrics:
+            scores = cross_val_score(
+                clf, X=self.M, y=self.L, cv=5, scoring=metric, n_jobs=-1
+            )
+            ret.update({"clf": clf, "clf_params": clf_hyper, metric: scores})
+
+            # Update our collection of best mean scores
+            mean_score = scores.mean()
+            for model in self.top_scores:
+                if model["clf"] == a_clf and model["top_scores"][metric] < mean_score:
+                    model["top_scores"][metric] = mean_score
+                    model["top_parameters"][metric] = clf_hyper
+
+        return ret
+
+    # Print out the metrics scores to the terminal for each classifier along
+    # with their associated hyperparameters
+    def print_scores(self):
+        for model in self.top_scores:
+            print("")
+            print(model["clf"].__name__)
+
+            for metric in model["top_scores"]:
+                print(
+                    metric,
+                    "{:.2f}".format(model["top_scores"][metric]),
+                    "-",
+                    model["top_parameters"][metric],
+                )
+
+    # Set up the plots. Using matplotlib, we create for plots, one for each
+    # metric, and plot out the scores for each classifier. This method allows
+    # for a very quick understanding of the model performance, but doesn't show
+    # any great detail - something I might reconsider in the future.
+    def plot_scores(self, save_path):
+        clfs_list = [clf.__name__ for clf in models_and_hypers]
+        num_plots = len(gridsearch.top_metrics)
+        index = 0
+        plt.figure(figsize=(16, 10))
+        for metric in gridsearch.top_metrics:
+            index = index + 1
+            plt.subplot(num_plots, 2, index)
+            plt.title(metric)
+            plt.scatter(clfs_list, gridsearch.top_metrics[metric], s=60, marker="+")
+            plt.savefig(f"{save_path}Top Model Scores.png")
+        plt.tight_layout(h_pad=2)
+        plt.suptitle("Best Scores for Each Model & Metric")
+        plt.show()
+
+
+# %%
+# ╔══════════════╗
+#   Run gridsearch
+# ╚══════════════╝
+# Define the metrics we want to test
+metrics = ["accuracy", "f1", "recall", "precision"]
+
+# Define the gridsearch using our data
 gridsearch = death_to_gridsearch(
     M=M, L=L, parameters=models_and_hypers, metrics=metrics
 )
+
+# Run the gridsearch and get the top scores
 top_scores = gridsearch.grid_search()
+
+# ╔══════════════════╗
+#   Print, Plot & Save
+# ╚══════════════════╝
+
+# Print and plot the top scores
 gridsearch.print_scores()
 gridsearch.plot_scores(
-    save_path="/Users/mattfarrow/Documents/GitHub/7335-machine-learning-2/Homework/mf_hw2_files/"
+    save_path="/Users/mattfarrow/Documents/GitHub/7335-machine-learning-2/Homework/"
 )
-
-# Save top_scores as a pickle file
-try:
-    import cPickle as pickle
-except ImportError:  # Python 3.x
-    import pickle
-
-with open("top_scores.p", "wb") as fp:
-    pickle.dump(top_scores, fp, protocol=pickle.HIGHEST_PROTOCOL)
-
 # Save top_scores as a JSON file
-import json
-
 with open("top_scores.json", "w") as fp:
     json.dump(top_scores, fp, sort_keys=True, indent=4)
