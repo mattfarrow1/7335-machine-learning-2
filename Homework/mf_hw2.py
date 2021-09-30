@@ -3,12 +3,18 @@
 # +-+-+-+-+-+-+-+-+
 # Matt Farrow
 
-# Note: this project's code is adapted from the work that Brandon Croom
-# previously did in this class. Although my intention had been to re-write the
-# code in my own style as I worked through it, the final product bears a much
-# stronger resemblance to the original work than I would like.
+# Note: In an effort to wrap my head around how to work through this assignment,
+# I turned to previous student projects on GitHub. As I worked through several
+# different versions of this assignment, my intention had been to build on what
+# I was learning and re-write the code in my own style. Unfortunately, the final
+# product bears a much stronger resemblance to the original work that Brandon
+# Croom did than I would like.
 #
 # https://github.com/jbcroom/DS7335-ML2/blob/master/HW2/DS7335-ML2-Croom-HW2.py
+#
+# After speaking with John Santerre, I am submitting what I have done now, but
+# plan to continue working on my understanding of what is happening in each of
+# these functions.
 
 # %%
 # ╔══════════╗
@@ -21,6 +27,7 @@ from sklearn.model_selection import KFold
 from sklearn import datasets
 import matplotlib.pyplot as plt
 import json
+import re
 
 # Import classifiers
 from sklearn.ensemble import RandomForestClassifier
@@ -115,20 +122,15 @@ def build_clf_acc_dict(results_dict):
         v1 = results_dict[key]["accuracy"]
         k1Test = str(k1)
 
-        # String formatting
-        # k1Test = k1Test.replace("            ", " ")  # remove large spaces from string
-        # k1Test = k1Test.replace("          ", " ")
+        # Remove extra spaces in 'k1Test'
         k1Test = re.sub("\s\s+", " ", k1Test)
 
-        # Then check if the string value 'k1Test' exists as a key in the dictionary
+        # If 'k1Test' exists as a key in the clf_accuracy_dict, then append the
+        # values, otherwise create a new key with a new value (v1).
         if k1Test in clf_accuracy_dict:
-            clf_accuracy_dict[k1Test].append(
-                v1
-            )  # append the values to create an array (techically a list) of values
+            clf_accuracy_dict[k1Test].append(v1)
         else:
-            clf_accuracy_dict[k1Test] = [
-                v1
-            ]  # create a new key (k1Test) in clf_accuracy_dict with a new value, (v1)
+            clf_accuracy_dict[k1Test] = [v1]
 
     return clf_accuracy_dict
 
@@ -162,11 +164,10 @@ def run_grid_search(models_dict, hyperparameter_dict, data, filename=""):
         for dic in hyper_list:
             np_results.update(run(value, data, dic))
 
-        # Find the classifiers for plotting from all the permutations we've run through
-        # this will get us to the "best" permutation of results to plot and prevent us
-        # from printing 100's of plots
+        # Get the best combination of models and hyperparameters for printing
         gs_accuracy.update(build_clf_acc_dict(np_results))
 
+        # Save the results of gs_accuracy as a JSON file
         with open("gs_accuracy.json", "w") as fp:
             json.dump(gs_accuracy, fp, sort_keys=True, indent=4)
 
